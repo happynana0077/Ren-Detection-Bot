@@ -3,7 +3,7 @@ from threading import Thread
 import discord
 from flask import Flask
 
-# Renderのウェブチェック（ポート検出）を通過させるための軽量Webサーバー
+# Renderのポート検出を通過させるための軽量Webサーバー
 app = Flask("")
 
 
@@ -38,7 +38,14 @@ async def on_message(message):
 
     text = message.content
 
-    if "レン" in text and "ヴァレンチーナ" not in text:
+    # 文章から「ヴァレンチーナ」を一時的に除去する
+    text_without_valentina = text.replace("ヴァレンチーナ", "")
+
+    # 検出したいキーワードの一覧
+    ren_keywords = ["レン", "れん", "ﾚﾝ"]
+
+    # ヴァレンチーナを取り除いた後の文章に「れん」が含まれているか判定
+    if any(keyword in text_without_valentina for keyword in ren_keywords):
         await message.channel.send("文章からレンが検出されました‼️")
 
 
