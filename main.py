@@ -47,10 +47,11 @@ async def on_message(message):
     # 文章から「ヴァレンチーナ」を一時的に除去する
     text_without_valentina = text.replace("ヴァレンチーナ", "")
 
-    # 検出したいキーワードの一覧
+    # キーワード定義
     ren_keywords = ["レン", "れん", "ﾚﾝ"]
+    reso_keywords = ["レソ", "れそ", "ﾚｿ"]
 
-    # ヴァレンチーナを取り除いた後の文章に「れん」が含まれているか判定
+    # 1. まず「レン」が含まれているかを最優先で判定
     if any(keyword in text_without_valentina for keyword in ren_keywords):
         now = time.time()
         channel_id = message.channel.id
@@ -80,6 +81,12 @@ async def on_message(message):
                 )
             else:
                 await message.channel.send("小生をお呼びでございましょうか？")
+
+    # 2. 「レン」が含まれておらず、「レソ」が含まれている場合の判定
+    elif any(keyword in text_without_valentina for keyword in reso_keywords):
+        await message.channel.send(
+            "小生をお呼びに…ああ、違いましたか。これは失礼いたしました。"
+        )
 
 
 token = os.environ.get("DISCORD_TOKEN")
