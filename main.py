@@ -7,21 +7,22 @@ import discord
 from flask import Flask
 
 # Renderのポート検出を通過させるための軽量Webサーバー
-app = Flask("")
+app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-    return "Bot is alive!"
+    return "Bot is alive!", 200
 
 
 def run_http():
+    # Renderが指定するPORT環境変数を確実に取得（デフォルトは10000）
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
 
 # バックグラウンドでWebサーバーを起動
-Thread(target=run_http).start()
+Thread(target=run_http, daemon=True).start()
 
 # Discord Botの処理
 intents = discord.Intents.default()
@@ -85,9 +86,10 @@ async def on_message(message):
     # 2. 「レン」が含まれておらず、「レソ」が含まれている場合の判定
     elif any(keyword in text_without_valentina for keyword in reso_keywords):
         await message.channel.send(
-            "小生をお呼びに…ああ、違いましたか。これは失礼いたしました。"
+            "小生をお呼びに…ああ、違いましたか。失礼いたしました。"
         )
 
 
 token = os.environ.get("DISCORD_TOKEN")
-client.run(token)
+if token:
+    client.run(token)
