@@ -22,5 +22,6 @@ async def on_message(message):
         await message.channel.send("文章からレンが検出されました‼️")
 
 
-token = os.environ.get("MTU0NjA3MTU2NDQ5MDEyMTI0Ng.G26dQJ.5JgTJGphHd4mzvPCiJaT-ZGgFVssj9BVKJ-IyM")
+# トークンはコードに直書きせず環境変数から読み込む
+token = os.environ.get("DISCORD_TOKEN")
 client.run(token)
