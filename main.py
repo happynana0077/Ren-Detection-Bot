@@ -1,7 +1,7 @@
-from collections import deque
 import os
 import random
 import time
+from collections import deque
 from threading import Thread
 import discord
 from flask import Flask
@@ -16,7 +16,6 @@ def home():
 
 
 def run_http():
-    # Renderが指定するPORT環境変数を確実に取得（デフォルトは10000）
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
 
@@ -69,24 +68,32 @@ async def on_message(message):
         # 今回の呼び出し時刻を記録
         timestamps.append(now)
 
-        # 30秒以内に5回以上呼び出された場合
+        # 30秒以内に5回以上呼び出された場合（連投時：ランダム）
         if len(timestamps) >= 5:
-            await message.channel.send(
-                "……何度もお呼びにならずとも、聞こえております。"
-            )
+            spam_responses = [
+                "……幾度もお呼びにならずとも、聞こえております。",
+                "……幾度もお呼びになるとは。よほどお暇でいらっしゃるようですな。",
+            ]
+            await message.channel.send(random.choice(spam_responses))
         else:
             # 5%の確率でレアメッセージ
             if random.random() < 0.05:
                 await message.channel.send(
-                    "主様、お呼びでございましょうか。ご用件がございましたら、何なりとお申し付けくださいませ。"
+                    "主様、小生に何かお申し付けでしょうか。お呼びとあらば、喜んで参りましょう。"
                 )
+            # 通常時（95%の確率）：ランダム
             else:
-                await message.channel.send("小生をお呼びでございましょうか？")
+                normal_responses = [
+                    "小生をお呼びでしょうか？",
+                    "小生に何か御用がおありでしょうか？",
+                    "はい。いかがなさいましたか？",
+                ]
+                await message.channel.send(random.choice(normal_responses))
 
-    # 2. 「レン」が含まれておらず、「レソ」が含まれている場合の判定
+    # 2. 「レン」が含まれておらず、「レソ」が含まれている場合の判定（誤認時）
     elif any(keyword in text_without_valentina for keyword in reso_keywords):
         await message.channel.send(
-            "小生をお呼びに…ああ、違いましたか。失礼いたしました。"
+            "小生をお呼びに……ああ、違いましたか。失礼いたしました。"
         )
 
 
